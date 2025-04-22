@@ -118,6 +118,8 @@ namespace NetAgent.Hosting.Extensions
             // Register IAgentFactory
             services.AddSingleton<IAgentFactory, MCPAgentFactory>();
 
+            //services.AddLogging();
+
             // Register IAgent as transient for multiple instances
             services.AddTransient(sp =>
             {

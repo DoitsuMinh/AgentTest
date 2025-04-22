@@ -68,6 +68,7 @@ namespace NetAgent.Optimization.Optimizers
                 var jsonResult = System.Text.Json.JsonSerializer.Deserialize<Root>(response.Content);
                 // Remove the ```json and ``` markers
                 string cleanJson = jsonResult.Candidates[0].Content.Parts[0].Text;
+                cleanJson = cleanJson.Replace("```json", "").Replace("```", "").Trim();
 
                 var cleaned = JsonConvert.DeserializeObject<SuggestionResponse>(cleanJson);
 

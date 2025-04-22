@@ -25,7 +25,7 @@ namespace NetAgent.LLM.Providers
         {
             _providers = providers ?? throw new ArgumentNullException(nameof(providers));
             _scorer = scorer ?? throw new ArgumentNullException(nameof(scorer));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _logger = logger;
             _healthCheck = healthCheck ?? throw new ArgumentNullException(nameof(healthCheck));
             _preferences = preferences ?? throw new ArgumentNullException(nameof(preferences)); 
         }

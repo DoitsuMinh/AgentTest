@@ -21,7 +21,7 @@ namespace NetAgent.LLM.Monitoring
         }
 
         public async Task<HealthCheckResult> CheckHealthAsync(string provider)
-        
+
         {
             // Check cache first
             if (TryGetCachedResult(provider, out var cachedResult))

@@ -10,10 +10,12 @@ namespace NetAgent.LLM.Providers
     public class SingleLLMWrapper : IMultiLLMProvider
     {
         private readonly ILLMProvider _provider;
+        private readonly ILogger<SingleLLMWrapper> _logger;
 
-        public SingleLLMWrapper(ILLMProvider provider)
+        public SingleLLMWrapper(ILLMProvider provider, ILogger<SingleLLMWrapper> logger)
         {
             _provider = provider;
+            _logger = logger;
         }
 
         public string Name => _provider.Name;
@@ -82,7 +84,8 @@ namespace NetAgent.LLM.Providers
 
         public ILogger<IMultiLLMProvider> GetLogger()
         {
-            throw new NotImplementedException("Logging is not supported in SingleLLMWrapper");
+            //throw new NotImplementedException("Logging is not supported in SingleLLMWrapper");
+            return _logger;
         }
 
         public async Task<bool> IsHealthyAsync()

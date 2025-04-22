@@ -14,6 +14,8 @@ using System.Text;
 using NetAgent.LLM.Providers;
 using NetAgent.LLM.Monitoring;
 using NetAgent.Core.Utils;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace NetAgent.Runtime.Agents
 {
@@ -255,6 +257,19 @@ namespace NetAgent.Runtime.Agents
             if (!string.IsNullOrEmpty(result.Output))
             {
                 await _keyValueMemory.SaveAsync($"response_{request.InputContext.Goal}", result.Output);
+                try
+                {
+                    var obj = JObject.Parse(result.Output);
+                    string text = (string?)obj["candidates"]?[0]?["content"]?["parts"]?[0]?["text"];
+                    if (text is not null)
+                    {
+                        result.Output = text;
+                    }                    
+                } catch
+                {
+
+                }
+                
             }
 
             return result;

@@ -5,6 +5,8 @@ using Google.Protobuf.Collections;
 using System.Net;
 using System.Net.Http.Json;
 using Qdrant.Client.Grpc;
+using System.Net.Http;
+using System.Text.Json.Serialization;
 
 namespace NetAgent.Memory.SemanticQdrant
 {
@@ -17,7 +19,7 @@ namespace NetAgent.Memory.SemanticQdrant
         public QdrantSemanticMemory(QdrantOptions options, IEmbeddingProvider embeddingProvider)
         {
             HttpClient = new HttpClient();
-            HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", options.ApiKey);
+            HttpClient.DefaultRequestHeaders.Add("api-key", options.ApiKey);
             _options = options;
             _embeddingProvider = embeddingProvider;
         }
@@ -59,6 +61,8 @@ namespace NetAgent.Memory.SemanticQdrant
                 with_payload = true
             };
 
+            var collectionResponse = await HttpClient.GetAsync($"{_options.Endpoint}/collections/{_options.CollectionName}");
+
             var searchResponse = await HttpClient.PostAsJsonAsync(
                 $"{_options.Endpoint}/collections/{_options.CollectionName}/points/query",
                 searchPayload
@@ -69,12 +73,34 @@ namespace NetAgent.Memory.SemanticQdrant
                 throw new Exception("Failed to search vectors");
             }
 
-            var searchResult = await searchResponse.Content.ReadFromJsonAsync<List<ScoredPoint>>();
+            //var searchResult_v1 = await searchResponse.Content.ReadAsStringAsync();
 
-            return searchResult
+
+            
+            var searchResult = await searchResponse.Content.ReadFromJsonAsync<SearchResponse>();
+            var scoredPoints = searchResult?.Result;
+
+            //var scoredResult = searchResult?.Result;
+            //if (scoredResult == null)
+            //{
+            //    throw new Exception("Failed to parse search result");
+            //}
+
+
+            return scoredPoints
                 .Select(FromScoredPoint)
                 .ToList();
         }
+
+        //public static SemanticSearchResult FromScoredPointResult(ScoredPointsResult point)
+        //{
+        //    return new SemanticSearchResult
+        //    {
+        //        Id = point.Id.ToString(),
+        //        Score = point.Score,
+        //        Payload = point.Payload
+        //    };
+        //}
 
         public static SemanticSearchResult FromScoredPoint(ScoredPoint point)
         {
@@ -120,6 +146,47 @@ namespace NetAgent.Memory.SemanticQdrant
                 default:
                     return value.ToString(); // fallback
             }
+        }
+
+        public class QdrantSearchResponse
+        {
+            [JsonPropertyName("usage")]
+            public ScoredUsage ScoredUsage { get; set; }
+            [JsonPropertyName("result")]
+            public ScoredPointsResult Result { get; set; }
+            [JsonPropertyName("status")]
+            public string? Status { get; set; }
+            [JsonPropertyName("time")]
+            public double? Time { get; set; }
+        }
+
+        public class ScoredPointsResult
+        {
+            [JsonPropertyName("points")]
+            public List<ScoredPoint> Points { get; set; } = [];
+        }
+
+        public class ScoredPointResult
+        {
+            [JsonPropertyName("id")]
+            public int Id { get; set; }
+            [JsonPropertyName("version")]
+            public int Version { get; set; }
+            [JsonPropertyName("score")]
+            public float Score { get; set; }
+            [JsonPropertyName("payload")]
+            public Dictionary<string, object>? Payload { get; set; }
+            [JsonPropertyName("vector")]
+            public List<float>? Vector { get; set; }
+        }
+        public class ScoredUsage
+        {
+            [JsonPropertyName("cpu")]
+            public int Cpu { get; set; }
+            [JsonPropertyName("io_read")]
+            public int Io_read { get; set; }
+            [JsonPropertyName("io_write")]
+            public int Io_write { get; set; }
         }
     }
 }

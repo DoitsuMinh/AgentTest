@@ -19,6 +19,7 @@ using NetAgent.LLM.Providers;
 using NetAgent.LLM.Monitoring;
 using NetAgent.Memory.SemanticQdrant;
 using NetAgent.Memory.SemanticQdrant.Models;
+using Microsoft.Extensions.Logging;
 
 namespace NetAgent.Runtime.Agents
 {
@@ -38,6 +39,7 @@ namespace NetAgent.Runtime.Agents
         private IOptimizer? _optimizer;
         private ILLMHealthCheck? _healthCheck;
         private AgentOptions? _options;
+        private ILogger<SingleLLMWrapper> _logger;
 
         public MCPAgentBuilder WithLLM(ILLMProvider llm)
         {
@@ -132,7 +134,7 @@ namespace NetAgent.Runtime.Agents
 
             // If multiLLM is not provided, create a basic implementation that wraps the single LLM
             var multiLLM = _multiLLMProvider ?? new SingleLLMWrapper(_llm ??
-                throw new InvalidOperationException("No valid LLM Provider available."));
+                throw new InvalidOperationException("No valid LLM Provider available."), _logger);
 
 
             _tools ??= Array.Empty<IAgentTool>();
