@@ -147,46 +147,5 @@ namespace NetAgent.Memory.SemanticQdrant
                     return value.ToString(); // fallback
             }
         }
-
-        public class QdrantSearchResponse
-        {
-            [JsonPropertyName("usage")]
-            public ScoredUsage ScoredUsage { get; set; }
-            [JsonPropertyName("result")]
-            public ScoredPointsResult Result { get; set; }
-            [JsonPropertyName("status")]
-            public string? Status { get; set; }
-            [JsonPropertyName("time")]
-            public double? Time { get; set; }
-        }
-
-        public class ScoredPointsResult
-        {
-            [JsonPropertyName("points")]
-            public List<ScoredPoint> Points { get; set; } = [];
-        }
-
-        public class ScoredPointResult
-        {
-            [JsonPropertyName("id")]
-            public int Id { get; set; }
-            [JsonPropertyName("version")]
-            public int Version { get; set; }
-            [JsonPropertyName("score")]
-            public float Score { get; set; }
-            [JsonPropertyName("payload")]
-            public Dictionary<string, object>? Payload { get; set; }
-            [JsonPropertyName("vector")]
-            public List<float>? Vector { get; set; }
-        }
-        public class ScoredUsage
-        {
-            [JsonPropertyName("cpu")]
-            public int Cpu { get; set; }
-            [JsonPropertyName("io_read")]
-            public int Io_read { get; set; }
-            [JsonPropertyName("io_write")]
-            public int Io_write { get; set; }
-        }
     }
 }

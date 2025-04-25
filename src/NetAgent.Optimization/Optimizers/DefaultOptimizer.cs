@@ -67,16 +67,17 @@ namespace NetAgent.Optimization.Optimizers
 
                 var jsonResult = System.Text.Json.JsonSerializer.Deserialize<Root>(response.Content);
                 // Remove the ```json and ``` markers
-                string cleanJson = jsonResult.Candidates[0].Content.Parts[0].Text;
-                cleanJson = cleanJson.Replace("```json", "").Replace("```", "").Trim();
+                string optimizedPrompt = jsonResult.Candidates[0].Content.Parts[0].Text;
+                string cleanedOptimizePrompt = optimizedPrompt.Replace("```json", "").Replace("```", "").Trim();
 
-                var cleaned = JsonConvert.DeserializeObject<SuggestionResponse>(cleanJson);
+                var cleanedPrompt = JsonConvert.DeserializeObject<SuggestionResponse>(cleanedOptimizePrompt);
 
 
                 var result = new OptimizationResult
                 {
-                    OptimizedPrompt = cleaned.OptimizedPrompt,
-                    Suggestions = cleaned.Suggestions.ToArray()
+                    OptimizedPrompt = optimizedPrompt,
+                    CleanedStringPrompt = cleanedPrompt.OptimizedPrompt,
+                    Suggestions = cleanedPrompt.Suggestions.ToArray()
                 };
                 if (result != null)
                 {

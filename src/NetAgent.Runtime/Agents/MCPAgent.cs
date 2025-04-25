@@ -144,7 +144,7 @@ namespace NetAgent.Runtime.Agents
                 }
             }
 
-            prompt = new Prompt(optimizationResult.OptimizedPrompt);
+            prompt = new Prompt(optimizationResult.CleanedStringPrompt);
 
             // Get relevant memories
             var relevantKeyValueMemories = await _keyValueMemory.RetrieveAsync(prompt.Content);

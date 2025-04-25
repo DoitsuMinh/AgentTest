@@ -39,7 +39,7 @@ namespace NetAgent.Abstractions.Models
         /// <summary>
         /// Ngôn ngữ giao tiếp của agent
         /// </summary>
-        public AgentLanguage Language { get; set; } = AgentLanguage.English;
+        public AgentLanguage Language { get; set; } = AgentLanguage.Vietnamese;
 
         /// <summary>
         /// Danh sách các nhà cung cấp ưu tiên
